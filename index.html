@@ -22,30 +22,30 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
 .panel{display:none}
 .panel.active{display:block}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0 6px}
+.kpi{background:#0f172a;border:1px solid var(--border);border-radius:12px;padding:12px}
+.kpi h4{margin:0 0 6px;font-size:13px;color:#9fb1d4}
+.kpi .v{font-size:22px;font-weight:700}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+select, .btn{background:#0f172a;border:1px solid var(--border);color:var(--text);border-radius:10px;padding:8px 10px}
+small.muted{color:#9fb1d4}
 .section{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:12px 0;overflow:hidden}
 .section-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border)}
 .section-header h2{margin:0;font-size:16px}
 .section-body{padding:12px}
-.collapse-btn{background:#0f172a;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 10px;cursor:pointer}
-iframe{width:100%;border:0;background:#0e1628;border-radius:10px}
-.note{color:var(--muted);font-size:12px;margin-top:10px}
-.footer{color:var(--muted);font-size:12px;padding:24px 0}
-a{color:var(--accent)}
-/* Print */
-@media print{
-  .header,.tabs{display:none}
-  body{background:#fff;color:#000}
-  .section,.card{border-color:#ddd}
-}
+.collapse-btn{background:#0f172a;border:1px solid var(--border);color:#9fb1d4;border-radius:8px;padding:6px 10px;cursor:pointer}
+.note{color:#9fb1d4;font-size:12px;margin-top:10px}
+.footer{color:#9fb1d4;font-size:12px;padding:24px 0}
+a{color:#7aa2ff}
+@media (max-width:700px){ .kpi-grid{grid-template-columns:1fr} }
+@media print{ .header,.tabs,.controls{display:none} body{background:#fff;color:#000} .card,.section{border-color:#ddd} }
 </style>
 </head>
 <body>
   <div class="header">
     <div class="container">
-      <div class="title">
-        <h1>Weekly Ops Dashboard</h1>
-      </div>
-      <div class="updated">Last built: 14 Aug 2025, 1:53 am</div>
+      <div class="title"><h1>Weekly Ops Dashboard</h1></div>
+      <div class="updated">Last built: 14 Aug 2025, 2:05 am</div>
       <div class="tabs">
         <button class="tab active" data-target="projects">Projects</button>
         <button class="tab" data-target="support">Support</button>
@@ -56,11 +56,111 @@ a{color:var(--accent)}
 
   <div class="container panels">
 
+    <!-- Projects Panel -->
     <div class="panel active" id="projects">
       <div class="card">
         <h2 style="margin-top:0">🧠 Weekly Project Report</h2>
-        <div style="font-family: Arial, sans-serif;">
+
+        <!-- KPIs across all projects -->
+        <div class="kpi-grid" id="projects-kpis">
+          <div class="kpi"><h4>Total issues</h4><div class="v" id="kpi-total">—</div></div>
+          <div class="kpi"><h4>Done %</h4><div class="v" id="kpi-donepct">—</div></div>
+          <div class="kpi"><h4>Closed this week</h4><div class="v" id="kpi-closed">—</div></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <label for="projectSelect"><small class="muted">Select project</small></label>
+          <select id="projectSelect"><option value="">All projects</option></select>
+          <button class="btn" id="resetBtn">Reset</button>
+        </div>
+
+        <!-- Per-project view -->
+        <div id="projectView" class="section">
+          <div class="section-header">
+            <h2 id="projectViewTitle">All Projects</h2>
+            <button class="collapse-btn" onclick="toggleSection(this)">Collapse</button>
+          </div>
+          <div class="section-body" id="projectViewBody">
+            <!-- Filled dynamically -->
+          </div>
+        </div>
+
+        <!-- Hidden source: full project HTML from report -->
+        <template id="projectsSource"><div style="font-family: Arial, sans-serif;">
   <h2>🧠 Weekly Jira Report – 14 August 2025</h2>
+    <h3>📊 ASDELIVERY Project Health</h3>
+    <ul>
+      <li>534 total issues</li>
+      <li>497 Done (93%)</li>
+      <li>0 issues closed in past week</li>
+    </ul>
+
+    <h4>✅ Recently Completed (moved to Done, 7d)</h4>
+    <ul><li>No items completed in the last 7 days</li></ul>
+
+    <h4>🚀 Recently Started (left To Do/Backlog/STARTING SOON/Open, 7d)</h4>
+    <ul>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-756">ASDELIVERY-756</a>: Mechanics Bay - MOU signed<br>
+        <span style="color:#555;">Started on 14/08/2025 • New status: Waiting on customer • Assignee: Unassigned</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-755">ASDELIVERY-755</a>: Pikes - agreement for $500<br>
+        <span style="color:#555;">Started on 14/08/2025 • New status: In Progress • Assignee: Unassigned</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-753">ASDELIVERY-753</a>: ECAN SDD<br>
+        <span style="color:#555;">Started on 14/08/2025 • New status: Waiting on customer • Assignee: Unassigned</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-752">ASDELIVERY-752</a>: Taupo - Gliding club agreement signed<br>
+        <span style="color:#555;">Started on 14/08/2025 • New status: Waiting on customer • Assignee: Unassigned</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-751">ASDELIVERY-751</a>: Taupo - Hospital agreement signed<br>
+        <span style="color:#555;">Started on 14/08/2025 • New status: Waiting on customer • Assignee: Unassigned</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-750">ASDELIVERY-750</a>: Taupo - Water agreement signed<br>
+        <span style="color:#555;">Started on 14/08/2025 • New status: Waiting on customer • Assignee: Unassigned</span>
+      </li></ul>
+
+    <h4>⚠️ Stagnant Tickets (14+ days since last status change)</h4>
+    <ul>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-708">ASDELIVERY-708</a>: Training manual<br>
+        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 70 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-712">ASDELIVERY-712</a>: U/A Summary - LPC<br>
+        <span style="color:#555;">Status: Review • Assignee: George Ridd • Last status change: 65 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-747">ASDELIVERY-747</a>: Waikato - SDD<br>
+        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 23 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-693">ASDELIVERY-693</a>: ECAN Agreement<br>
+        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 86 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-748">ASDELIVERY-748</a>: Waikato agreement signed<br>
+        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 23 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-732">ASDELIVERY-732</a>: Unattended Aerodrome report<br>
+        <span style="color:#555;">Status: Review • Assignee: George Ridd • Last status change: 38 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-3">ASDELIVERY-3</a>: AS: Unattended aerodromes<br>
+        <span style="color:#555;">Status: In Progress • Assignee: Unassigned • Last status change: 301 days ago</span>
+      </li>
+      <li>
+        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-444">ASDELIVERY-444</a>: Police to Sign MOU.<br>
+        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 317 days ago</span>
+      </li></ul>
+  
     <h3>📊 ZAM Project Health</h3>
     <ul>
       <li>50 total issues</li>
@@ -237,54 +337,6 @@ a{color:var(--accent)}
         <span style="color:#555;">Status: WAITING • Assignee: Fraser McKenzie • Last status change: 377 days ago</span>
       </li></ul>
   
-    <h3>📊 ASDELIVERY Project Health</h3>
-    <ul>
-      <li>527 total issues</li>
-      <li>497 Done (94%)</li>
-      <li>0 issues closed in past week</li>
-    </ul>
-
-    <h4>✅ Recently Completed (moved to Done, 7d)</h4>
-    <ul><li>No items completed in the last 7 days</li></ul>
-
-    <h4>🚀 Recently Started (left To Do/Backlog/STARTING SOON/Open, 7d)</h4>
-    <ul><li>No items started in the last 7 days</li></ul>
-
-    <h4>⚠️ Stagnant Tickets (14+ days since last status change)</h4>
-    <ul>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-712">ASDELIVERY-712</a>: U/A Summary - LPC<br>
-        <span style="color:#555;">Status: Review • Assignee: George Ridd • Last status change: 65 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-708">ASDELIVERY-708</a>: Training manual<br>
-        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 70 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-747">ASDELIVERY-747</a>: Waikato - SDD<br>
-        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 23 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-693">ASDELIVERY-693</a>: ECAN Agreement<br>
-        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 86 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-748">ASDELIVERY-748</a>: Waikato agreement signed<br>
-        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 23 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-732">ASDELIVERY-732</a>: Unattended Aerodrome report<br>
-        <span style="color:#555;">Status: Review • Assignee: George Ridd • Last status change: 38 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-3">ASDELIVERY-3</a>: AS: Unattended aerodromes<br>
-        <span style="color:#555;">Status: In Progress • Assignee: Unassigned • Last status change: 301 days ago</span>
-      </li>
-      <li>
-        <a href="https://airwaysinternational.atlassian.net/browse/ASDELIVERY-444">ASDELIVERY-444</a>: Police to Sign MOU.<br>
-        <span style="color:#555;">Status: Waiting on customer • Assignee: Unassigned • Last status change: 317 days ago</span>
-      </li></ul>
-  
     <h3>📊 ASA Project Health</h3>
     <ul>
       <li>370 total issues</li>
@@ -324,10 +376,11 @@ a{color:var(--accent)}
         <a href="https://airwaysinternational.atlassian.net/browse/SSDELIVERY-13">SSDELIVERY-13</a>: FEB AC - Support (First time support)<br>
         <span style="color:#555;">Status: In Progress • Assignee: Unassigned • Last status change: 170 days ago</span>
       </li></ul>
-  </div>
+  </div></template>
       </div>
     </div>
 
+    <!-- Support Panel -->
     <div class="panel" id="support">
       <div class="card">
         <h2 style="margin-top:0">🛠️ Weekly Support Report</h2>
@@ -407,8 +460,8 @@ a{color:var(--accent)}
 
     
   <h3 style="margin:18px 0 6px;">⏳ Waiting for customer > 14 days (4)</h3>
-  <ul><li><a href="https://airwaysinternational.atlassian.net/browse/SUPPORT-3825">SUPPORT-3825</a>: Slower applications start/load<br>
-   <span style="color:#555;">Status: Waiting for customer • Assignee: Penaia Rawasoi • In status: 70d</span></li><li><a href="https://airwaysinternational.atlassian.net/browse/SUPPORT-3788">SUPPORT-3788</a>: MACRO<br>
+  <ul><li><a href="https://airwaysinternational.atlassian.net/browse/SUPPORT-3788">SUPPORT-3788</a>: MACRO<br>
+   <span style="color:#555;">Status: Waiting for customer • Assignee: Penaia Rawasoi • In status: 71d</span></li><li><a href="https://airwaysinternational.atlassian.net/browse/SUPPORT-3825">SUPPORT-3825</a>: Slower applications start/load<br>
    <span style="color:#555;">Status: Waiting for customer • Assignee: Penaia Rawasoi • In status: 70d</span></li><li><a href="https://airwaysinternational.atlassian.net/browse/SUPPORT-2770">SUPPORT-2770</a>: Issues with strip printing ENOL<br>
    <span style="color:#555;">Status: Waiting for customer • Assignee: Mishma Hameed • In status: 56d</span></li><li><a href="https://airwaysinternational.atlassian.net/browse/SUPPORT-4019">SUPPORT-4019</a>: SAERCO: Not saving exercise<br>
    <span style="color:#555;">Status: Waiting for customer • Assignee: Penaia Rawasoi • In status: 21d</span></li></ul>
@@ -421,6 +474,7 @@ a{color:var(--accent)}
       </div>
     </div>
 
+    <!-- Opportunities Panel -->
     <div class="panel" id="opps">
       <div class="card">
         <h2 style="margin-top:0">🧭 Weekly Sales Strategy – Commercial Opportunities</h2>
@@ -956,17 +1010,18 @@ John</span> <span style="display:inline-block;margin:2px 6px 0 0;padding:2px 6px
       </div>
     </div>
 
-    <div class="footer">
-      Built by n8n • This is a static page; refresh for latest.
-    </div>
+    <div class="footer">Built by n8n • This is a static page; refresh for latest.</div>
   </div>
 
 <script>
+/* Tabs */
 function selectTab(id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.target===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===id));
 }
 document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', ()=>selectTab(btn.dataset.target)));
+
+/* Collapse */
 function toggleSection(btn){
   const body = btn.closest('.section').querySelector('.section-body');
   if(!body) return;
@@ -974,6 +1029,118 @@ function toggleSection(btn){
   body.style.display = hidden ? '' : 'none';
   btn.textContent = hidden ? 'Collapse' : 'Expand';
 }
+
+/* ===== Projects parsing & UI =====
+   We expect the Project report to have repeated blocks like:
+
+   <h3>📊 {KEY} Project Health</h3>
+   <ul>
+     <li>{N} total issues</li>
+     <li>{D} Done ({P}%)</li>
+     <li>{C} issues closed in past week</li>
+   </ul>
+   <h4>✅ Recently Completed...</h4> ...
+
+   We'll split the HTML by each H3 header, compute aggregated KPIs, and let the user pick a project.
+*/
+(function initProjects(){
+  const src = document.getElementById('projectsSource');
+  const container = document.createElement('div');
+  container.innerHTML = src.innerHTML;
+
+  // Collect project sections
+  const sections = [];
+  const h3s = Array.from(container.querySelectorAll('h3'));
+  for (let i=0;i<h3s.length;i++){
+    const h = h3s[i];
+    const title = h.textContent.trim();
+    const m = title.match(/📊s+([A-Z0-9_-]+)s+Project Health/i);
+    if(!m) continue;
+    const key = m[1];
+    // Section content = from this <h3> until the next <h3> (or end)
+    const frag = document.createElement('div');
+    let n = h;
+    while(n && n.tagName !== 'H3') n = n.nextElementSibling; // ensure at H3
+    // Append H3 itself
+    frag.appendChild(h.cloneNode(true));
+    // Then following nodes up to next H3
+    let p = h.nextElementSibling;
+    while(p && p.tagName !== 'H3'){
+      frag.appendChild(p.cloneNode(true));
+      p = p.nextElementSibling;
+    }
+    sections.push({ key, html: frag.innerHTML });
+  }
+
+  // Compute KPIs across all
+  let totalAll = 0, doneAll = 0, closedAll = 0;
+  const kpiRE = {
+    total: /(d+)s+total issues/i,
+    done: /(d+)s+Done/i,
+    closed: /(d+)s+issues closed in past week/i
+  };
+
+  sections.forEach(s=>{
+    const tmp = document.createElement('div');
+    tmp.innerHTML = s.html;
+    const ul = tmp.querySelector('ul');
+    const text = ul ? ul.textContent : tmp.textContent;
+    const t = (text||'');
+    const total = (t.match(kpiRE.total)||[])[1] ? parseInt((t.match(kpiRE.total)||[])[1],10) : 0;
+    const done = (t.match(kpiRE.done)||[])[1] ? parseInt((t.match(kpiRE.done)||[])[1],10) : 0;
+    const closed = (t.match(kpiRE.closed)||[])[1] ? parseInt((t.match(kpiRE.closed)||[])[1],10) : 0;
+    totalAll += total; doneAll += done; closedAll += closed;
+  });
+
+  // Update KPI cards
+  const fmtPct = (n) => isFinite(n) ? (Math.round(n*10)/10).toFixed(1)+'%' : '—';
+  document.getElementById('kpi-total').textContent = sections.length ? totalAll : '—';
+  document.getElementById('kpi-donepct').textContent = sections.length && totalAll ? fmtPct(100*doneAll/totalAll) : '—';
+  document.getElementById('kpi-closed').textContent = sections.length ? closedAll : '—';
+
+  // Build project selector
+  const sel = document.getElementById('projectSelect');
+  sections.forEach(s=>{
+    const opt = document.createElement('option');
+    opt.value = s.key;
+    opt.textContent = s.key;
+    sel.appendChild(opt);
+  });
+
+  // Render "All Projects" by default (show the original full HTML)
+  const viewBody = document.getElementById('projectViewBody');
+  const viewTitle = document.getElementById('projectViewTitle');
+  const full = document.createElement('div'); full.innerHTML = src.innerHTML;
+
+  function renderAll(){
+    viewTitle.textContent = 'All Projects';
+    viewBody.innerHTML = '';
+    viewBody.appendChild(full.cloneNode(true));
+  }
+  function renderProject(key){
+    const found = sections.find(s=>s.key===key);
+    if(!found){ renderAll(); return; }
+    viewTitle.textContent = key + ' Project';
+    viewBody.innerHTML = found.html;
+  }
+
+  sel.addEventListener('change', (e)=>{
+    const val = e.target.value;
+    if(!val) renderAll(); else renderProject(val);
+  });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    sel.value = '';
+    renderAll();
+  });
+
+  // Initial paint
+  if (sections.length){ renderAll(); }
+  else {
+    // If parsing failed, just show raw
+    viewTitle.textContent = 'All Projects';
+    viewBody.innerHTML = src.innerHTML + '<p class="note">Note: could not detect per-project sections automatically.</p>';
+  }
+})();
 </script>
 </body>
 </html>
